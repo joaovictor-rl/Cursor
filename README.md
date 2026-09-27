@@ -2,6 +2,10 @@
 
 **Calculadora de trajetória acadêmica para alunos da UFPA.** Você envia o PDF do histórico emitido pelo SIGAA e o Cursor mostra, em uma página, em que ponto do curso você está e quanto falta para se formar.
 
+**Acesse:** [cursor-vfrg.onrender.com](https://cursor-vfrg.onrender.com)
+
+> Hospedado no plano gratuito do Render: se o site estiver parado, o primeiro acesso pode levar até um minuto.
+
 ![Tela inicial do Cursor](docs/upload.png)
 
 **Tecnologias:** Python · FastAPI · pdfplumber · pandas · React · Recharts · Vite · Docker
@@ -9,12 +13,12 @@
 ## O que ele mostra
 
 - **CRG** e **CR de cada semestre**, com gráfico da evolução
-- **Carga horária** cumprida e exigida, por tipo de componente
+- - **Carga horária** cumprida e exigida, com o percentual do curso concluído
 - Disciplinas **concluídas** (as mais recentes primeiro) e **não concluídas**
 - **Previsão de formatura**, com base no seu ritmo médio de horas por semestre
 - **Simulador do próximo semestre:** você escolhe o conceito esperado em cada disciplina e vê como ficam o CRG, o percentual do curso e a previsão. Aceita também disciplinas de fora do currículo (flexibilizadas)
 
-Não tem um histórico em mãos? O site tem um **histórico fictício** para testar.
+Não tem um histórico em mãos? Clique em **Ver com um histórico fictício**..
 
 ## Como funciona
 
@@ -120,7 +124,7 @@ São 23 testes que cobrem a leitura do PDF, os cálculos e a API, incluindo arqu
 
 ## Hospedagem
 
-O site está no [Render](https://render.com), no plano gratuito. O `Dockerfile` compila o React, instala a API e serve os dois pelo mesmo endereço. Cada `git push` na branch `main` gera um novo deploy.
+O site está no O site está no [Render](https://render.com), no plano gratuito., no plano gratuito. O `Dockerfile` compila o React, instala a API e serve os dois pelo mesmo endereço. Cada `git push` na branch `main` gera um novo deploy.
 
 ## Créditos
 
