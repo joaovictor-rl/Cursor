@@ -63,3 +63,17 @@ def test_nome_em_duas_linhas():
 def test_pdf_invalido():
     with pytest.raises(HistoricoInvalido):
         ler_historico(b"%PDF-1.4 arquivo quebrado")
+
+
+def test_codigo_em_linha_separada_com_varios_docentes():
+    linhas = [
+        "ANATOMIA HUMANA", "Docentes:", "ENF001",
+        "2025.4 FULANO DE TAL - Titulacao: DOUTORADO 210 02A 99,2 E APROVADO",
+        "CICLANA DE TAL - Titulacao: MESTRADO",
+        "ENF002 HISTORIA DA ENFERMAGEM", "2025.4 60 01 100,0 B APROVADO",
+        "Docente: BELTRANO - Titulacao: DOUTORADO",
+        "BIOLOGIA", "ENF003", "2025.4 Docente: FULANA - Titulacao: 165 02A 100,0 R APROVADO", "DOUTORADO",
+    ]
+    lidas = [(d["codigo"], d["nome"], d["ch"], d["conceito"]) for d in extrair_disciplinas(linhas)]
+    assert lidas == [("ENF001", "ANATOMIA HUMANA", 210, "E"), ("ENF002", "HISTORIA DA ENFERMAGEM", 60, "B"),
+                     ("ENF003", "BIOLOGIA", 165, "R")]

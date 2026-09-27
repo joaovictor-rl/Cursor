@@ -10,16 +10,21 @@ from .regras import CONCEITOS, normalizar_situacao
 
 MAX_PAGINAS = 20
 
-# No SIGAA o nome da disciplina fica numa linha própria, acima da linha com o código:
+# No SIGAA o nome da disciplina fica numa linha própria, acima da linha com o resultado:
 #   ALGORITMOS
 #   2025.2 COMP001 60 02 100,0 B APROVADO
 #   2025.4 COMP010 Docente: FULANO - Titulacao: DOUTORADO 30 02 100,0 B APROVADO
 #   2026.4 # MG03014 60 02 100,0 - MATRICULADO
 # Colunas: período, (símbolo), código, (docente), CH, turma, frequência, conceito, situação.
+# Quando a disciplina tem vários docentes, o código vai para uma linha separada:
+#   ENFE01002 HISTORIA DA ENFERMAGEM
+#   2025.4 60 01 100,0 E APROVADO
 LINHA_DISCIPLINA = re.compile(
-    r"^(?P<periodo>\d{4}\.[1-4]) (?:[*&#@§] )?(?P<codigo>[A-Z]{2,}\d{2,}\w*) (?:Docente:.*? )?"
+    r"^(?P<periodo>\d{4}\.[1-4]) (?:[*&#@§] )?(?:(?P<codigo>[A-Z]{2,}\d{2,}\w*) )?(?:.*? )??"
     r"(?P<ch>\d{1,4}) \S+ \S+ (?P<conceito>\S+) (?P<situacao>[A-ZÀ-Ü ]+)$"
 )
+LINHA_DE_CODIGO = re.compile(r"^(?:[*&#@§] )?(?P<codigo>[A-Z]{2,}\d{2,}\w*)(?: (?P<resto>.+))?$")
+TITULACOES = {"DOUTORADO", "MESTRADO", "ESPECIALIZAÇÃO", "ESPECIALIZACAO", "GRADUAÇÃO", "GRADUACAO"}
 LINHA_DE_NOME = re.compile(r"^[A-ZÀ-Ü0-9][A-ZÀ-Ü0-9 ,.\-()/&']*$")
 
 DADOS_DO_ALUNO = {
@@ -70,18 +75,29 @@ def ler_linhas(pdf_bytes: bytes) -> list[str]:
     return [" ".join(linha.split()) for linha in texto.splitlines() if linha.strip()]
 
 
+def eh_docente(linha: str) -> bool:
+    return "Titulacao" in linha or linha.startswith("Docente") or linha in TITULACOES
+
+
 def extrair_disciplinas(linhas: list[str]) -> list[dict]:
-    disciplinas, nome = [], []
+    disciplinas, nome, codigo = [], [], None
     for linha in linhas:
-        achado = LINHA_DISCIPLINA.match(linha)
-        if achado:
-            conceito = achado["conceito"] if achado["conceito"] in CONCEITOS else None
-            disciplinas.append({
-                "periodo": achado["periodo"], "codigo": achado["codigo"], "nome": " ".join(nome[-3:]),
-                "ch": int(achado["ch"]), "conceito": conceito,
-                "situacao": normalizar_situacao(achado["situacao"]),
-            })
-            nome = []
+        if achado := LINHA_DISCIPLINA.match(linha):
+            if achado["codigo"] or codigo:
+                conceito = achado["conceito"] if achado["conceito"] in CONCEITOS else None
+                disciplinas.append({
+                    "periodo": achado["periodo"], "codigo": achado["codigo"] or codigo,
+                    "nome": " ".join(nome[-3:]), "ch": int(achado["ch"]), "conceito": conceito,
+                    "situacao": normalizar_situacao(achado["situacao"]),
+                })
+            nome, codigo = [], None
+        elif achado := LINHA_DE_CODIGO.match(linha):
+            codigo = achado["codigo"]
+            resto = achado["resto"] or ""
+            if LINHA_DE_NOME.match(resto) and not eh_docente(resto):
+                nome = [resto]
+        elif eh_docente(linha):
+            continue
         elif LINHA_DE_NOME.match(linha):
             nome.append(linha)
         else:
