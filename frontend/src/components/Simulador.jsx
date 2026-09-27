@@ -50,7 +50,7 @@ export default function Simulador({ historico }) {
     <section className="bloco largo">
       <h2>Simulador do próximo semestre</h2>
       <p className="bloco-dica">
-        Escolha o conceito que você espera em cada disciplina. O cálculo usa o meio de cada faixa, então é uma estimativa.
+        Escolha o conceito que você espera em cada disciplina. Cada conceito tem um peso fixo no CRG, como no SIGAA.
       </p>
 
       <div className="simulador">

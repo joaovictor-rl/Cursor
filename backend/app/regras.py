@@ -1,11 +1,12 @@
 """Regras da UFPA: conceitos, situações e o cálculo do coeficiente de rendimento (CR)."""
 
-# O histórico mostra só a letra; o valor é o meio da faixa de notas de cada conceito.
+# Peso fixo de cada conceito no CR: tirar 9 ou 10 dá o mesmo Excelente.
+# Conferido com os CRs impressos pelo SIGAA em históricos reais.
 CONCEITOS = {
-    "E": {"nome": "Excelente", "faixa": "9–10", "valor": 9.5},
+    "E": {"nome": "Excelente", "faixa": "9–10", "valor": 10.0},
     "B": {"nome": "Bom", "faixa": "7–8", "valor": 7.5},
-    "R": {"nome": "Regular", "faixa": "5–6", "valor": 5.5},
-    "I": {"nome": "Insuficiente", "faixa": "0–4", "valor": 2.0},
+    "R": {"nome": "Regular", "faixa": "5–6", "valor": 5.0},
+    "I": {"nome": "Insuficiente", "faixa": "0–4", "valor": 2.5},
 }
 CONCEITOS_QUE_APROVAM = {"E", "B", "R"}
 
