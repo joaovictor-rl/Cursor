@@ -9,6 +9,7 @@ import Previsao from "./components/Previsao";
 import Simulador from "./components/Simulador";
 import Disciplinas from "./components/Disciplinas";
 import Logo from "./components/Logo";
+import BotaoTema from "./components/BotaoTema";
 
 const HOJE = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 
@@ -47,7 +48,10 @@ export default function App() {
         <div className="jornal-faixa">
           <span>Edição de {HOJE}</span>
           <span className="jornal-faixa-centro">O jornal da sua trajetória acadêmica</span>
-          <span>Sistemas de Informação · UFPA</span>
+          <div className="jornal-faixa-direita">
+            <span>Sistemas de Informação · UFPA</span>
+            <BotaoTema />
+          </div>
         </div>
         <div className="jornal-manchete">
           <h1 className="logo"><Logo /></h1>

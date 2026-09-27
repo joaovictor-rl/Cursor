@@ -32,6 +32,29 @@
   font-size: 17px;
 }
 
+/* Tema escuro, ligado pela lâmpada: papel escuro e tinta clara */
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+  --papel: #1d1d1b;
+  --papel-claro: #262624;
+  --papel-escuro: #121211;
+  --tinta: #d8d1c8;
+  --tinta-2: #b3ada4;
+  --tinta-3: #8c877f;
+  --ferrugem: #e0663a;
+  --fio: rgb(216 209 200 / 0.8);
+  --fio-leve: rgb(216 209 200 / 0.2);
+  --grade: rgb(216 209 200 / 0.12);
+  --eixo: rgb(216 209 200 / 0.5);
+  --neutra: #7c776f;
+  --grao-opacidade: 0.3;
+}
+:root[data-tema="escuro"] body::before { mix-blend-mode: screen; }
+
+/* sem barra de rolagem visível */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+
 * { box-sizing: border-box; }
 html { background: var(--papel); }
 body {
@@ -57,6 +80,14 @@ h1, h2, p { margin: 0; }
   font-size: 13px; font-style: italic; color: var(--tinta-2);
   border-bottom: 1px solid var(--fio); padding-bottom: 6px; margin-bottom: 8px;
 }
+.jornal-faixa-direita { display: flex; align-items: center; gap: 10px; }
+.botao-tema {
+  display: grid; place-items: center; width: 30px; height: 30px; padding: 0;
+  background: none; color: var(--tinta); border: 1px solid var(--fio); border-radius: 50%; cursor: pointer;
+}
+.botao-tema:hover { background: var(--tinta); color: var(--papel); }
+.botao-tema:focus-visible { outline: 2px solid var(--ferrugem); outline-offset: 2px; }
+.botao-tema svg { width: 17px; height: 17px; }
 .jornal-faixa-centro { font-family: var(--fonte-titulo); font-size: 15px; font-style: normal; color: var(--tinta); }
 .jornal-manchete {
   background: var(--tinta); color: var(--papel);
