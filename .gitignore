@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+
+# Node e site compilado (o Dockerfile e o iniciar.bat geram de novo)
+node_modules/
+frontend/dist/
+
+# Nunca versionar históricos reais: só o PDF fictício
+*.pdf
+!frontend/public/historico_ficticio.pdf
+
+
+# Arquivo da fonte Transcity (demo, uso pessoal): o logo já é SVG, a fonte não é publicada
+frontend/public/fonts/
+frontend/dist/fonts/

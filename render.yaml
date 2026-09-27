@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: cursor
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/saude

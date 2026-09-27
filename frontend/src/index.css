@@ -1,0 +1,330 @@
+/* =====================================================================
+   Cursor — estética de papel / jornal impresso
+   Papel acinzentado com textura, tinta quase preta, destaque ferrugem,
+   fios finos separando colunas, blocos invertidos e botões ovais.
+   ===================================================================== */
+
+:root {
+  color-scheme: light;
+  /* papel e tinta */
+  --papel: #cdc6be;
+  --papel-claro: #dcd6cf;
+  --papel-escuro: #bdb5ab;
+  --tinta: #1d1d1b;
+  --tinta-2: #4a4843;
+  --tinta-3: #6f6b63;
+  --ferrugem: #c03f13;
+  --fio: rgb(29 29 27 / 0.85);
+  --fio-leve: rgb(29 29 27 / 0.22);
+  --grao-opacidade: 0.55;
+
+  /* cores dos gráficos */
+  --texto-2: var(--tinta-2);
+  --grade: rgb(29 29 27 / 0.14);
+  --eixo: rgb(29 29 27 / 0.55);
+  --serie-1: var(--tinta);
+  --serie-2: var(--ferrugem);
+  --neutra: #8b8479;
+
+  --fonte-titulo: "Instrument Serif", "Times New Roman", serif;
+  --fonte-texto: "Newsreader", Georgia, "Times New Roman", serif;
+  font-family: var(--fonte-texto);
+  font-size: 17px;
+}
+
+/* À noite, o jornal inverte: papel escuro e tinta clara */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --papel: #1d1d1b;
+    --papel-claro: #262624;
+    --papel-escuro: #121211;
+    --tinta: #d8d1c8;
+    --tinta-2: #b3ada4;
+    --tinta-3: #8c877f;
+    --ferrugem: #e0663a;
+    --fio: rgb(216 209 200 / 0.8);
+    --fio-leve: rgb(216 209 200 / 0.2);
+    --grade: rgb(216 209 200 / 0.12);
+    --eixo: rgb(216 209 200 / 0.5);
+    --neutra: #7c776f;
+    --grao-opacidade: 0.3;
+  }
+}
+
+* { box-sizing: border-box; }
+html { background: var(--papel); }
+body {
+  margin: 0; background: var(--papel); color: var(--tinta);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+/* textura de papel: ruído fractal por cima de tudo, sem capturar cliques */
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100;
+  opacity: var(--grao-opacidade); mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .42 0 0 0 0 .38 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark) {
+  body::before { mix-blend-mode: screen; }
+}
+
+h1, h2, p { margin: 0; }
+::selection { background: var(--tinta); color: var(--papel); }
+
+.pagina { max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
+
+/* ----------------------------------------------------------- cabeçalho de jornal */
+.jornal { margin-bottom: 28px; }
+.jornal-faixa {
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  font-size: 13px; font-style: italic; color: var(--tinta-2);
+  border-bottom: 1px solid var(--fio); padding-bottom: 6px; margin-bottom: 8px;
+}
+.jornal-faixa-centro { font-family: var(--fonte-titulo); font-size: 15px; font-style: normal; color: var(--tinta); }
+.jornal-manchete {
+  background: var(--tinta); color: var(--papel);
+  display: flex; justify-content: center; align-items: center;
+  padding: 4px 16px 10px; border: 1px solid var(--tinta);
+}
+h1.logo { font-size: clamp(64px, 13vw, 168px); line-height: 1; color: var(--papel); }
+.logo-svg { display: block; height: .62em; width: auto; margin: .2em auto .16em; }
+.jornal-sub {
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+  border-bottom: 3px double var(--fio); padding: 10px 0;
+}
+.subtitulo { font-size: 18px; font-style: italic; color: var(--tinta-2); }
+
+/* ----------------------------------------------------------- botões ovais */
+.botao {
+  font-family: var(--fonte-titulo); font-size: 20px; letter-spacing: .02em; text-transform: uppercase;
+  background: var(--tinta); color: var(--papel); border: 1px solid var(--tinta);
+  border-radius: 999px; padding: 8px 26px 7px; cursor: pointer; transition: background .15s, color .15s;
+}
+.botao:hover:not(:disabled) { background: var(--ferrugem); border-color: var(--ferrugem); color: #f4efe9; }
+.botao:disabled { opacity: .45; cursor: not-allowed; }
+.botao.secundario { background: transparent; color: var(--tinta); }
+.botao.secundario:hover:not(:disabled) { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+.botao:focus-visible, .filtro:focus-visible, .dropzone:focus-visible, .opcao-conceito:focus-visible, .remover:focus-visible {
+  outline: 2px solid var(--ferrugem); outline-offset: 3px;
+}
+
+/* ----------------------------------------------------------- tela de envio */
+.upload-area { max-width: 760px; margin: 12px auto 32px; display: grid; gap: 22px; }
+.abertura { font-size: 21px; line-height: 1.45; }
+.capitular {
+  float: left; font-family: var(--fonte-titulo); font-size: 64px; line-height: .85;
+  background: var(--tinta); color: var(--papel); padding: 6px 9px 2px; margin: 4px 10px 0 0;
+}
+.dropzone {
+  border: 1.5px dashed var(--fio); background: var(--papel-claro);
+  padding: 52px 24px; text-align: center; cursor: pointer; transition: background .15s;
+}
+.dropzone.ativa, .dropzone:hover { background: var(--papel-escuro); }
+.icone-upload { font-family: var(--fonte-titulo); font-size: 48px; line-height: 1; color: var(--ferrugem); }
+.dropzone-titulo { font-family: var(--fonte-titulo); font-size: 30px; line-height: 1.1; margin-top: 6px; }
+.dropzone-dica { color: var(--tinta-2); font-style: italic; margin-top: 6px; }
+.upload-rodape { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.privacidade { color: var(--tinta-2); font-size: 15px; flex: 1 1 320px; }
+.como-baixar { color: var(--tinta-2); font-size: 15px; border-top: 1px solid var(--fio-leve); padding-top: 10px; }
+.como-baixar summary { cursor: pointer; font-style: italic; }
+.erro { color: var(--ferrugem); font-weight: 600; }
+
+/* ----------------------------------------------------------- painel */
+.painel { display: grid; gap: 0; }
+.aluno {
+  font-size: 15px; color: var(--tinta-2); font-style: italic; padding-bottom: 12px;
+}
+.aluno strong { font-style: normal; color: var(--tinta); letter-spacing: .02em; }
+
+/* resumo: colunas de jornal separadas por fios */
+.resumo {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  border-top: 1px solid var(--fio); border-bottom: 1px solid var(--fio);
+}
+.cartao { display: grid; gap: 2px; padding: 16px 20px 18px; border-left: 1px solid var(--fio-leve); }
+.cartao:first-child { border-left: 0; padding-left: 0; }
+.cartao-rotulo { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: var(--tinta-2); }
+.cartao-valor { font-family: var(--fonte-titulo); font-size: 64px; line-height: 1; font-variant-numeric: lining-nums; }
+.cartao-detalhe { font-size: 14px; font-style: italic; color: var(--tinta-3); }
+
+/* blocos: sem caixa, só fios de separação */
+.grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grade > .bloco:nth-child(odd) { border-right: 1px solid var(--fio-leve); padding-right: 24px; }
+.grade > .bloco:nth-child(even) { padding-left: 24px; }
+@media (max-width: 820px) {
+  .grade { grid-template-columns: 1fr; }
+  .grade > .bloco:nth-child(odd) { border-right: 0; padding-right: 0; }
+  .grade > .bloco:nth-child(even) { padding-left: 0; }
+}
+.bloco { padding: 22px 0 24px; border-bottom: 1px solid var(--fio); }
+.painel > .bloco:last-child { border-bottom: 0; }
+.bloco h2 {
+  font-family: var(--fonte-titulo); font-weight: 400; font-size: 34px; line-height: 1.05;
+  text-transform: uppercase; letter-spacing: .005em;
+}
+.bloco-dica { font-size: 15px; font-style: italic; color: var(--tinta-2); margin: 4px 0 14px; }
+.bloco-cabecalho { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+
+.recharts-default-tooltip {
+  background: var(--papel-claro) !important; border: 1px solid var(--fio) !important;
+  border-radius: 0 !important; box-shadow: 3px 3px 0 var(--tinta);
+}
+.recharts-legend-item-text { color: var(--tinta-2) !important; font-style: italic; }
+.recharts-cartesian-axis-tick-value { font-family: var(--fonte-texto); }
+
+/* ----------------------------------------------------------- progresso */
+.progresso-topo { display: flex; justify-content: space-between; gap: 8px; font-size: 16px; margin: 8px 0 6px; flex-wrap: wrap; }
+.progresso-lista { margin-top: 20px; }
+.barra { height: 14px; border: 1px solid var(--fio); background: transparent; }
+.barra-preenchida {
+  height: 100%; background: var(--tinta); transition: width .4s;
+  background-image: repeating-linear-gradient(135deg, transparent 0 4px, rgb(255 255 255 / .08) 4px 8px);
+}
+
+/* ----------------------------------------------------------- previsão */
+.previsao-destaque { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 4px 0 16px; }
+.previsao-periodo { font-family: var(--fonte-titulo); font-size: 76px; line-height: 1; }
+.previsao-lista { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 20px; margin: 0; }
+.previsao-lista > div { border-top: 1px solid var(--fio-leve); padding-top: 6px; }
+.previsao-lista dt { font-size: 13px; text-transform: uppercase; letter-spacing: .1em; color: var(--tinta-2); }
+.previsao-lista dd { margin: 2px 0 0; font-family: var(--fonte-titulo); font-size: 26px; font-variant-numeric: tabular-nums; }
+
+/* selos: carimbos de tinta */
+.selo {
+  display: inline-block; font-size: 13px; font-weight: 500; padding: 1px 10px;
+  border: 1px solid var(--fio); border-radius: 999px; white-space: nowrap; letter-spacing: .02em;
+}
+.selo.ok { color: var(--tinta); }
+.selo.alerta { background: var(--ferrugem); border-color: var(--ferrugem); color: #f4efe9; }
+.selo.info { color: var(--ferrugem); border-color: var(--ferrugem); }
+.selo.neutro { color: var(--tinta-2); border-style: dotted; }
+
+/* ----------------------------------------------------------- abas */
+.filtros { display: flex; gap: 0; border: 1px solid var(--fio); border-radius: 999px; overflow: hidden; }
+.filtro {
+  border: 0; background: transparent; color: var(--tinta); font: inherit; font-size: 15px;
+  padding: 6px 16px; cursor: pointer;
+}
+.filtro + .filtro { border-left: 1px solid var(--fio); }
+.filtro.ativo { background: var(--tinta); color: var(--papel); }
+
+/* ----------------------------------------------------------- tabelas */
+.tabela-rolagem { overflow-x: auto; margin-top: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 16px; }
+th {
+  text-align: left; font-weight: 500; color: var(--tinta-2); font-size: 12px;
+  text-transform: uppercase; letter-spacing: .12em; border-bottom: 1px solid var(--fio);
+}
+th, td { padding: 8px 10px; }
+td { border-bottom: 1px solid var(--fio-leve); }
+tbody tr:hover td { background: rgb(29 29 27 / .04); }
+.mono { font-family: var(--fonte-texto); font-variant-numeric: tabular-nums; font-size: 14px; color: var(--tinta-2); letter-spacing: .04em; }
+
+/* conceitos: de tinta cheia (Excelente) a ferrugem (Insuficiente) */
+.conceito { display: inline-block; font-size: 13px; font-weight: 500; padding: 1px 10px; border-radius: 999px; white-space: nowrap; border: 1px solid var(--fio); }
+.conceito-E { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+.conceito-B { color: var(--tinta); }
+.conceito-R { color: var(--tinta-2); border-style: dashed; }
+.conceito-I { background: var(--ferrugem); border-color: var(--ferrugem); color: #f4efe9; }
+
+/* ----------------------------------------------------------- simulador */
+.simulador { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 3fr); gap: 24px; }
+@media (max-width: 820px) { .simulador { grid-template-columns: 1fr; } }
+.simulador > * { min-width: 0; }
+.simulador-lista { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; align-content: start; border-top: 1px solid var(--fio); }
+.plano { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 10px 0; border-bottom: 1px solid var(--fio-leve); }
+.plano-nome { flex: 1 1 220px; font-size: 16px; min-width: 0; }
+.plano-ch { color: var(--tinta-3); margin-left: 6px; font-size: 14px; font-style: italic; }
+.remover { border: 0; background: transparent; color: var(--tinta-2); cursor: pointer; font-size: 18px; padding: 4px 8px; }
+.remover:hover { color: var(--ferrugem); }
+
+.seletor-conceito { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); flex: 1 1 340px; border: 1px solid var(--fio); border-radius: 999px; overflow: hidden; }
+.opcao-conceito {
+  display: grid; gap: 0; padding: 5px 4px 4px; cursor: pointer; font: inherit; text-align: center;
+  border: 0; background: transparent; color: var(--tinta-2);
+}
+.opcao-conceito + .opcao-conceito { border-left: 1px solid var(--fio-leve); }
+.opcao-conceito strong { font-size: 13px; font-weight: 500; }
+.opcao-conceito small { font-size: 11px; font-style: italic; opacity: .8; font-variant-numeric: tabular-nums; }
+.opcao-conceito:hover { background: rgb(29 29 27 / .06); color: var(--tinta); }
+.opcao-conceito.marcado { background: var(--tinta); color: var(--papel); }
+.opcao-conceito.marcado.op-I { background: var(--ferrugem); color: #f4efe9; }
+
+.simulador-adicionar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.simulador-adicionar select {
+  flex: 1 1 260px; min-width: 0; width: 100%; padding: 10px 12px; font: inherit; font-size: 16px;
+  border: 1px solid var(--fio); border-radius: 0; background: var(--papel-claro); color: var(--tinta);
+}
+.simulador-resultado {
+  align-self: start; border: 1px solid var(--fio); background: var(--papel-claro); padding: 12px 16px;
+  display: grid; gap: 10px; box-shadow: 4px 4px 0 var(--tinta);
+}
+.comparacao { display: grid; gap: 0; border-bottom: 1px solid var(--fio-leve); padding-bottom: 8px; }
+.comparacao:last-child { border-bottom: 0; padding-bottom: 0; }
+.comparacao .cartao-rotulo { font-size: 12px; }
+.comparacao-valores {
+  font-family: var(--fonte-titulo); font-size: 26px; line-height: 1.1;
+  display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-variant-numeric: tabular-nums;
+}
+.comparacao-valores strong { font-weight: 400; }
+.seta { color: var(--tinta-3); font-family: var(--fonte-texto); font-size: 22px; }
+.delta { font-family: var(--fonte-texto); font-size: 14px; font-weight: 600; }
+.delta.sobe { color: var(--tinta); }
+.delta.desce { color: var(--ferrugem); }
+.vazio { color: var(--tinta-3); font-size: 16px; font-style: italic; }
+
+/* ----------------------------------------------------------- rodapé */
+.rodape {
+  margin-top: 36px; padding-top: 12px; border-top: 3px double var(--fio);
+  font-size: 13px; color: var(--tinta-2); text-align: center; letter-spacing: .02em;
+}
+
+/* ----------------------------------------------------------- tela inicial sem rolagem */
+body.sem-rolagem { overflow: hidden; }
+.pagina.inicial {
+  height: 100vh; height: 100dvh; display: flex; flex-direction: column;
+  padding-top: clamp(8px, 2vh, 20px); padding-bottom: clamp(8px, 1.5vh, 16px);
+}
+.pagina.inicial .jornal { margin-bottom: clamp(8px, 2vh, 20px); }
+.pagina.inicial .jornal-faixa { margin-bottom: 6px; }
+.pagina.inicial .jornal-manchete { padding: 0 16px 4px; }
+.pagina.inicial h1.logo { font-size: clamp(44px, 11vh, 150px); }
+.pagina.inicial .jornal-sub { padding: 6px 0; }
+.pagina.inicial .upload-area { flex: 1; min-height: 0; margin: 0 auto; gap: clamp(8px, 1.8vh, 20px); align-content: center; }
+.pagina.inicial .abertura { font-size: clamp(15px, 2.2vh, 21px); }
+.pagina.inicial .capitular { font-size: clamp(40px, 6vh, 64px); }
+.pagina.inicial .dropzone { padding: clamp(14px, 4vh, 48px) 24px; }
+.pagina.inicial .icone-upload { font-size: clamp(28px, 4.5vh, 48px); }
+.pagina.inicial .dropzone-titulo { font-size: clamp(20px, 3.2vh, 30px); }
+.pagina.inicial .rodape { margin-top: clamp(8px, 1.5vh, 16px); padding-top: 8px; }
+@media (max-height: 540px) {
+  body.sem-rolagem { overflow: auto; }
+  .pagina.inicial { height: auto; }
+}
+
+/* itens de grid não crescem além da trilha (sem rolagem horizontal) */
+.painel > *, .grade > * { min-width: 0; }
+
+@media (max-width: 600px) {
+  :root { font-size: 16px; }
+  .cartao { border-left: 0; padding-left: 0; border-top: 1px solid var(--fio-leve); }
+  .cartao:first-child { border-top: 0; }
+  .cartao-valor { font-size: 52px; }
+  .bloco h2 { font-size: 28px; }
+  .jornal-faixa { justify-content: center; text-align: center; }
+  .jornal-faixa > span:not(.jornal-faixa-centro) { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+/* disciplina fora do currículo (simulador) */
+.form-extra { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; margin-top: 10px; padding: 10px 12px; border: 1px dashed var(--fio); }
+.form-extra label { display: grid; gap: 2px; font-size: 13px; color: var(--tinta-2); flex: 1 1 200px; }
+.form-extra label.campo-ch { flex: 0 0 90px; }
+.form-extra input {
+  font: inherit; font-size: 16px; padding: 7px 10px; border: 1px solid var(--fio); border-radius: 0;
+  background: var(--papel-claro); color: var(--tinta);
+}
+.selo.extra { color: var(--tinta-2); border-style: dashed; margin-left: 6px; font-size: 11px; }
