@@ -32,26 +32,6 @@
   font-size: 17px;
 }
 
-/* À noite, o jornal inverte: papel escuro e tinta clara */
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --papel: #1d1d1b;
-    --papel-claro: #262624;
-    --papel-escuro: #121211;
-    --tinta: #d8d1c8;
-    --tinta-2: #b3ada4;
-    --tinta-3: #8c877f;
-    --ferrugem: #e0663a;
-    --fio: rgb(216 209 200 / 0.8);
-    --fio-leve: rgb(216 209 200 / 0.2);
-    --grade: rgb(216 209 200 / 0.12);
-    --eixo: rgb(216 209 200 / 0.5);
-    --neutra: #7c776f;
-    --grao-opacidade: 0.3;
-  }
-}
-
 * { box-sizing: border-box; }
 html { background: var(--papel); }
 body {
@@ -63,9 +43,6 @@ body::before {
   content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100;
   opacity: var(--grao-opacidade); mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .42 0 0 0 0 .38 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-@media (prefers-color-scheme: dark) {
-  body::before { mix-blend-mode: screen; }
 }
 
 h1, h2, p { margin: 0; }

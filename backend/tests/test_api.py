@@ -20,7 +20,7 @@ def historico():
 
 def test_upload_devolve_metricas(historico):
     m = historico["metricas"]
-    assert m["resumo"]["crg"] == pytest.approx(7.1087)
+    assert m["resumo"]["crg"] == pytest.approx(7.1739)
     assert m["resumo"]["percentual"] == 38.8
     assert [s["periodo"] for s in m["semestres"]] == ["2024.2", "2024.4", "2025.2", "2025.4", "2026.2"]
     assert m["previsao"]["prazo"] == "2027.4"

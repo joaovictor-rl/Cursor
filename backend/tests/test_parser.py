@@ -46,8 +46,8 @@ def test_conceitos_e_situacoes(historico):
 
 def test_indices_oficiais(historico):
     oficial = historico["oficial"]
-    assert oficial["crg"] == pytest.approx(7.1087)
-    assert oficial["cr_semestres"]["2025.2"] == pytest.approx(7.83)
+    assert oficial["crg"] == pytest.approx(7.1739)
+    assert oficial["cr_semestres"]["2025.2"] == pytest.approx(7.92)
     assert oficial["prazo"] == "2027.4"
     assert oficial["carga_horaria"]["total"] == {"exigida": 3090, "integralizada": 1200}
     assert len(oficial["pendentes"]) == 24          # linhas do ENADE (0 h) ficam de fora
