@@ -1,5 +1,5 @@
 from app.metricas import calcular_metricas, indice_do_semestre, rotulo_do_semestre, simular
-from app.regras import calcular_cr
+from app.regras import arredondar, calcular_cr
 
 
 def disciplina(periodo, codigo, ch, conceito, situacao):
@@ -47,6 +47,22 @@ def test_previsao_de_formatura():
     previsao = calcular_metricas(historico, oficial)["previsao"]
     # faltam 900 h num ritmo de 300 h por semestre: 3 semestres depois de 2025.4 (2026.2, 2026.4 e 2027.2)
     assert (previsao["semestres_restantes"], previsao["periodo_previsto"]) == (3, "2027.2")
+
+
+def test_previsao_conta_as_disciplinas_em_curso():
+    historico = [disciplina("2025.2", "A", 300, "B", "aprovado"), disciplina("2025.4", "B", 240, "B", "aprovado"),
+                 disciplina("2025.4", "C", 60, "I", "reprovado"), disciplina("2026.2", "D", 300, None, "cursando")]
+    oficial = {**OFICIAL_VAZIO, "prazo": "2027.4", "carga_horaria": {"total": {"exigida": 1500, "integralizada": 540}}}
+    previsao = calcular_metricas(historico, oficial)["previsao"]
+    # faltam 960 h; 300 h estão em curso, sobram 660 h num ritmo de 300 h cursadas por semestre: 3 depois de 2026.2
+    assert (previsao["ritmo"], previsao["semestres_restantes"], previsao["periodo_previsto"]) == (300, 3, "2027.4")
+    assert previsao["dentro_do_prazo"] is True
+    assert previsao["ritmo_para_o_prazo"] == 220
+
+
+def test_arredonda_cinco_para_cima():
+    # 7,125 publicado com duas casas vira 7,13 (IN 02/2008, item 4)
+    assert arredondar(7.125) == 7.13
 
 
 def test_pesos_batem_com_o_cr_do_sigaa():

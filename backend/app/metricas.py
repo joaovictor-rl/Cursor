@@ -6,7 +6,7 @@ Como o SIGAA, juntamos .1 + .2 no 1º semestre do ano e .3 + .4 no 2º.
 """
 import math
 
-from .regras import CONCEITOS, CONCEITOS_QUE_APROVAM, CONCLUI, ENTRA_NO_CR, calcular_cr
+from .regras import CONCEITOS, CONCEITOS_QUE_APROVAM, CONCLUI, ENTRA_NO_CR, arredondar, calcular_cr
 
 
 def indice_do_semestre(periodo: str) -> int:
@@ -41,6 +41,8 @@ def calcular_metricas(disciplinas: list[dict], oficial: dict) -> dict:
             "periodo": rotulo_do_semestre(indice),
             "cr": cr if cr is not None else calcular_cr(lista),
             "ch_concluida": sum(d["ch"] for d in lista if d["situacao"] in CONCLUI),
+            "ch_cursada": sum(d["ch"] for d in lista if d["situacao"] in CONCLUI | {"reprovado", "cursando"}),
+            "ch_em_curso": sum(d["ch"] for d in lista if d["situacao"] == "cursando"),
             "aprovadas": sum(d["situacao"] == "aprovado" for d in lista),
             "reprovadas": sum(d["situacao"] == "reprovado" for d in lista),
             "trancadas": sum(d["situacao"] == "trancado" for d in lista),
@@ -53,7 +55,7 @@ def calcular_metricas(disciplinas: list[dict], oficial: dict) -> dict:
         ch_real = sum(d["ch"] for d in disciplinas if not d.get("simulada") and d["situacao"] in ENTRA_NO_CR)
         soma = oficial["crg"] * ch_real + sum(CONCEITOS[d["conceito"]]["valor"] * d["ch"] for d in simuladas)
         ch_total = ch_real + sum(d["ch"] for d in simuladas)
-        crg = round(soma / ch_total, 4) if ch_total else oficial["crg"]
+        crg = arredondar(soma / ch_total, 4) if ch_total else oficial["crg"]
     else:
         crg = calcular_cr(disciplinas)
 
@@ -97,26 +99,40 @@ def calcular_metricas(disciplinas: list[dict], oficial: dict) -> dict:
 
 
 def prever_formatura(semestres: list[dict], ch_restante: int, prazo: str | None) -> dict:
-    """Divide a carga horária que falta pela média de horas concluídas por semestre."""
-    concluidos = [s for s in semestres if s["cursando"] == 0]
-    com_horas = [s["ch_concluida"] for s in concluidos if s["ch_concluida"] > 0]
+    """Conta as disciplinas em curso como concluídas neste semestre e divide o que ainda
+    faltar pela média de horas que o aluno cursa por semestre (reprovações entram na média,
+    porque ocupam o semestre, mas não reduzem o que falta)."""
+    atual = semestres[-1]
+    ch_em_curso = atual["ch_em_curso"]
+    ch_depois = max(ch_restante - ch_em_curso, 0)
+    com_horas = [s["ch_cursada"] for s in semestres if s["ch_cursada"] > 0]
     ritmo = sum(com_horas) / len(com_horas) if com_horas else 0
-    base = concluidos[-1]["indice"] if concluidos else semestres[0]["indice"] - 1
+    base = atual["indice"]  # o último semestre do histórico (em curso ou concluído)
 
-    if ch_restante <= 0:
+    if ch_depois <= 0:
         restantes = 0
     elif ritmo > 0:
-        restantes = math.ceil(ch_restante / ritmo)
+        restantes = math.ceil(ch_depois / ritmo)
     else:
         restantes = None
 
+    # quantas horas por semestre seriam precisas para terminar dentro do prazo
+    ritmo_para_o_prazo = None
+    if prazo and ch_depois > 0:
+        semestres_ate_o_prazo = indice_do_semestre(prazo) - base
+        if semestres_ate_o_prazo > 0:
+            ritmo_para_o_prazo = math.ceil(ch_depois / semestres_ate_o_prazo)
+
     return {
         "ch_restante": max(ch_restante, 0),
+        "ch_em_curso": ch_em_curso,
         "ritmo": round(ritmo),
+        "ritmo_para_o_prazo": ritmo_para_o_prazo,
         "semestres_restantes": restantes,
         "periodo_previsto": rotulo_do_semestre(base + restantes) if restantes is not None else None,
         "contando_de": rotulo_do_semestre(base),
         "prazo": prazo,
+        "dentro_do_prazo": (base + restantes <= indice_do_semestre(prazo)) if prazo and restantes is not None else None,
     }
 
 
